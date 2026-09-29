@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון משוב - מרפאה רינולוגית</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding:1rem}
+.wrap{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+h1{font-size:18px;font-weight:600;margin-bottom:.25rem;color:#1a1a1a}
+.subtitle{font-size:13px;color:#666;margin-bottom:1.5rem}
+.lang-bar{display:flex;gap:8px;margin-bottom:1.5rem}
+.lang-btn{padding:5px 14px;border:1px solid #ccc;border-radius:8px;background:none;cursor:pointer;font-size:13px;color:#555}
+.lang-btn.active{background:#e8f0fe;border-color:#4a80d4;color:#1a56c4;font-weight:600}
+.pid-row{display:flex;gap:8px;align-items:center;margin-bottom:1.5rem;padding:10px 14px;background:#f9f9f9;border:1px solid #ddd;border-radius:8px}
+.pid-row label{font-size:13px;color:#555;white-space:nowrap}
+.pid-row input{flex:1;font-size:13px;border:1px solid #ccc;border-radius:6px;padding:6px 10px}
+.section{margin-bottom:1.75rem}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:1rem;padding-bottom:6px;border-bottom:1px solid #eee}
+.q-row{margin-bottom:1.1rem}
+.q-label{font-size:14px;color:#222;margin-bottom:6px;display:block}
+.stars{display:flex;gap:6px}
+.star{font-size:30px;cursor:pointer;color:#ddd;line-height:1;padding:2px;transition:color .1s;user-select:none}
+.star:hover,.star.lit{color:#F0B429}
+.yn{display:flex;gap:8px;margin-top:6px}
+.yn-btn{padding:7px 20px;border:1px solid #ccc;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;color:#333}
+.yn-btn.active{background:#e8f0fe;border-color:#4a80d4;color:#1a56c4;font-weight:600}
+.yn-btn.active-no{background:#fde8e8;border-color:#d44a4a;color:#b91c1c;font-weight:600}
+.gate-box{padding:12px 14px;background:#f9f9f9;border-radius:8px;border:1px solid #ddd;margin-bottom:1rem}
+.surgery-section{display:none}
+.surgery-section.show{display:block}
+textarea{width:100%;min-height:80px;resize:vertical;font-family:Arial,sans-serif;font-size:13px;border:1px solid #ccc;border-radius:8px;padding:8px 10px;color:#222}
+textarea:focus{outline:none;border-color:#4a80d4}
+.submit-btn{width:100%;padding:12px;background:#1a56c4;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:.5rem}
+.submit-btn:hover{background:#1446a0}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.success{display:none;padding:14px;background:#e6f9ee;border:1px solid #34c77b;color:#176639;border-radius:8px;font-size:14px;text-align:center;margin-top:1rem}
+.err{display:none;padding:10px 14px;background:#fde8e8;border:1px solid #d44a4a;color:#b91c1c;border-radius:8px;font-size:13px;margin-top:.75rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="page-title">שאלון משוב מטופלים</h1>
+  <p class="subtitle" id="intro"></p>
+
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('he',this)">עברית</button>
+    <button class="lang-btn" onclick="setLang('ar',this)">عربي</button>
+    <button class="lang-btn" onclick="setLang('ru',this)">Русский</button>
+  </div>
+
+  <div class="pid-row">
+    <label id="pid-label">קוד מטופל:</label>
+    <input type="text" id="patient-code" placeholder="RH-XXXX" />
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="sec-clinic"></div>
+    <div id="qs-clinic"></div>
+  </div>
+
+  <div class="gate-box">
+    <div class="q-label" id="surgery-gate-q"></div>
+    <div class="yn">
+      <button class="yn-btn" id="sg-yes" onclick="setSurgery(true)"></button>
+      <button class="yn-btn" id="sg-no" onclick="setSurgery(false)"></button>
+    </div>
+  </div>
+
+  <div class="section surgery-section" id="surgery-section">
+    <div class="section-title" id="sec-surgery"></div>
+    <div id="qs-surgery"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="sec-general"></div>
+    <div id="qs-general"></div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitForm()"></button>
+  <div class="err" id="err-msg"></div>
+  <div class="success" id="success-msg"></div>
+</div>
+
+<script>
+const SUPABASE_URL='https://qxjkrhdpnkutqvxqwxsc.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4amtyaGRwbmt1dHF2eHF3eHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjQyMjQsImV4cCI6MjEwNjE0MDIyNH0.7XGgTrU1kkgpZ1i79oR7te0iwJDE6_WAm5w76k1HZ40';
+
+const LANGS={
+  he:{
+    dir:'rtl',title:'שאלון משוב מטופלים',pid:'קוד מטופל:',
+    intro:'שלום! נשמח לשמוע על חוויית הטיפול שלך. המשוב עוזר לנו להשתפר.',
+    secClinic:'מרפאה רינולוגית',secSurgery:'הליך ניתוחי',secGeneral:'כללי',
+    gateQ:'האם עברת ניתוח במסגרת הטיפול?',yes:'כן',no:'לא',
+    submit:'שלח משוב',success:'תודה! המשוב שלך נשמר ויעזור לנו להשתפר.',
+    err:'שגיאה בשמירה, נסה שוב.',errCode:'יש להזין קוד מטופל.',
+    errStars:'יש לדרג את כל השאלות.',errGate:'יש לענות על שאלת הניתוח.',
+    pgood:'מה היה טוב?',pimprove:'מה ניתן לשפר?',
+    clinic:['הסבר על האבחנה והמצב הרפואי','הסבר על אפשרויות הטיפול','זמינות הצוות לשאלות','זמן המתנה לתור','ניקיון ונוחות המרפאה','יחס אישי ואמפתיה','המשכיות הטיפול ומעקב','נגישות לתיאום תורים','הסבר על תוצאות בדיקות','שיתוף בהחלטה הטיפולית'],
+    surgery:['הסבר לפני הניתוח (ציפיות וסיכונים)','הכנה לניתוח – הנחיות טרום ניתוח','חוויית ההרדמה','הוראות טיפול לאחר הניתוח','מעקב פוסט-אופרטיבי','תוצאת הניתוח – שיפור בתסמינים','משך זמן ההחלמה','זמינות הצוות בתקופת ההחלמה','האישפוז במחלקה'],
+    general:['שביעות רצון כוללת מהטיפול','האם תחזור לטיפול עתידי','השוואה לציפיות מראש','תחושת ביטחון ואמון בצוות']
+  },
+  ar:{
+    dir:'rtl',title:'استبيان ملاحظات المرضى',pid:'رمز المريض:',
+    intro:'مرحباً! يسعدنا سماع رأيك في تجربة علاجك. ملاحظاتك تساعدنا على التحسين.',
+    secClinic:'العيادة الأنفية',secSurgery:'الإجراء الجراحي',secGeneral:'عام',
+    gateQ:'هل خضعت لعملية جراحية في إطار العلاج؟',yes:'نعم',no:'لا',
+    submit:'إرسال الملاحظات',success:'شكراً! تم حفظ ملاحظاتك.',
+    err:'خطأ في الحفظ.',errCode:'يرجى إدخال رمز المريض.',
+    errStars:'يرجى تقييم جميع الأسئلة.',errGate:'يرجى الإجابة على سؤال العملية.',
+    pgood:'ما الذي كان جيداً؟',pimprove:'ما الذي يمكن تحسينه؟',
+    clinic:['شرح التشخيص والحالة الطبية','شرح خيارات العلاج','توافر الطاقم للأسئلة','وقت الانتظار للموعد','نظافة العيادة وراحتها','المعاملة الشخصية والتعاطف','استمرارية العلاج والمتابعة','سهولة تنسيق المواعيد','شرح نتائج الفحوصات','المشاركة في القرار العلاجي'],
+    surgery:['الشرح قبل العملية','التحضير للعملية','تجربة التخدير','تعليمات ما بعد العملية','المتابعة بعد العملية','نتيجة العملية','مدة التعافي','توافر الطاقم في التعافي','الإقامة في القسم'],
+    general:['الرضا العام','العودة للعلاج مستقبلاً','مقارنة بالتوقعات','الثقة بالطاقم']
+  },
+  ru:{
+    dir:'ltr',title:'Анкета обратной связи',pid:'Код пациента:',
+    intro:'Здравствуйте! Мы рады узнать о вашем опыте лечения. Ваши отзывы помогают нам улучшаться.',
+    secClinic:'Ринологическая клиника',secSurgery:'Хирургическая процедура',secGeneral:'Общее',
+    gateQ:'Вам проводилась операция в рамках лечения?',yes:'Да',no:'Нет',
+    submit:'Отправить отзыв',success:'Спасибо! Ваш отзыв сохранён.',
+    err:'Ошибка сохранения.',errCode:'Введите код пациента.',
+    errStars:'Пожалуйста, оцените все вопросы.',errGate:'Ответьте на вопрос об операции.',
+    pgood:'Что было хорошо?',pimprove:'Что можно улучшить?',
+    clinic:['Объяснение диагноза','Варианты лечения','Доступность персонала','Время ожидания','Чистота клиники','Личное отношение','Преемственность лечения','Запись на приём','Результаты обследований','Участие в решениях'],
+    surgery:['Объяснение перед операцией','Подготовка к операции','Анестезия','Инструкции после операции','Наблюдение после операции','Результат операции','Время восстановления','Доступность персонала','Госпитализация'],
+    general:['Общая удовлетворённость','Возврат на лечение','Сравнение с ожиданиями','Доверие к персоналу']
+  }
+};
+
+let lang='he', hasSurgery=null;
+const scores={clinic:{},surgery:{},general:{}};
+
+function setLang(l, btn){
+  lang=l;
+  const d=LANGS[l];
+  document.documentElement.dir=d.dir;
+  document.documentElement.lang=l;
+  document.getElementById('page-title').textContent=d.title;
+  document.getElementById('intro').textContent=d.intro;
+  document.getElementById('pid-label').textContent=d.pid;
+  document.getElementById('sec-clinic').textContent=d.secClinic;
+  document.getElementById('sec-surgery').textContent=d.secSurgery;
+  document.getElementById('sec-general').textContent=d.secGeneral;
+  document.getElementById('surgery-gate-q').textContent=d.gateQ;
+  document.getElementById('sg-yes').textContent=d.yes;
+  document.getElementById('sg-no').textContent=d.no;
+  document.getElementById('submit-btn').textContent=d.submit;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderQ('clinic',d.clinic);
+  renderQ('surgery',d.surgery);
+  renderGeneral(d);
+}
+
+function renderQ(cat,qs){
+  document.getElementById('qs-'+cat).innerHTML=qs.map((q,i)=>`
+    <div class="q-row">
+      <span class="q-label">${q}</span>
+      <div class="stars">
+        <span class="star${(scores[cat][i]||0)>=1?' lit':''}" onclick="setStar('${cat}',${i},1)">★</span>
+        <span class="star${(scores[cat][i]||0)>=2?' lit':''}" onclick="setStar('${cat}',${i},2)">★</span>
+        <span class="star${(scores[cat][i]||0)>=3?' lit':''}" onclick="setStar('${cat}',${i},3)">★</span>
+        <span class="star${(scores[cat][i]||0)>=4?' lit':''}" onclick="setStar('${cat}',${i},4)">★</span>
+        <span class="star${(scores[cat][i]||0)>=5?' lit':''}" onclick="setStar('${cat}',${i},5)">★</span>
+      </div>
+    </div>`).join('');
+}
+
+function renderGeneral(d){
+  document.getElementById('qs-general').innerHTML=d.general.map((q,i)=>`
+    <div class="q-row">
+      <span class="q-label">${q}</span>
+      <div class="stars">
+        <span class="star${(scores.general[i]||0)>=1?' lit':''}" onclick="setStar('general',${i},1)">★</span>
+        <span class="star${(scores.general[i]||0)>=2?' lit':''}" onclick="setStar('general',${i},2)">★</span>
+        <span class="star${(scores.general[i]||0)>=3?' lit':''}" onclick="setStar('general',${i},3)">★</span>
+        <span class="star${(scores.general[i]||0)>=4?' lit':''}" onclick="setStar('general',${i},4)">★</span>
+        <span class="star${(scores.general[i]||0)>=5?' lit':''}" onclick="setStar('general',${i},5)">★</span>
+      </div>
+    </div>`).join('')+`
+  <div class="q-row"><span class="q-label">${d.pgood}</span><textarea id="txt-good" placeholder="${d.pgood}"></textarea></div>
+  <div class="q-row"><span class="q-label">${d.pimprove}</span><textarea id="txt-improve" placeholder="${d.pimprove}"></textarea></div>`;
+}
+
+function setStar(cat,i,val){
+  scores[cat][i]=val;
+  const stars=document.querySelectorAll(`#qs-${cat} .q-row:nth-child(${i+1}) .star`);
+  stars.forEach((s,idx)=>s.classList.toggle('lit',idx<val));
+}
+
+function setSurgery(val){
+  hasSurgery=val;
+  document.getElementById('sg-yes').className='yn-btn'+(val?' active':'');
+  document.getElementById('sg-no').className='yn-btn'+(!val?' active-no':'');
+  document.getElementById('surgery-section').classList.toggle('show',val);
+}
+
+async function submitForm(){
+  const d=LANGS[lang];
+  const errEl=document.getElementById('err-msg');
+  errEl.style.display='none';
+  const code=document.getElementById('patient-code').value.trim();
+  if(!code){errEl.textContent=d.errCode;errEl.style.display='block';return;}
+  if(hasSurgery===null){errEl.textContent=d.errGate;errEl.style.display='block';return;}
+  for(let i=0;i<10;i++) if(!scores.clinic[i]){errEl.textContent=d.errStars;errEl.style.display='block';return;}
+  if(hasSurgery) for(let i=0;i<9;i++) if(!scores.surgery[i]){errEl.textContent=d.errStars;errEl.style.display='block';return;}
+  for(let i=0;i<4;i++) if(!scores.general[i]){errEl.textContent=d.errStars;errEl.style.display='block';return;}
+
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true; btn.textContent='...';
+
+  const payload={
+    patient_code:code, lang:lang, has_surgery:hasSurgery,
+    clinic_diagnosis:scores.clinic[0], clinic_options:scores.clinic[1],
+    clinic_staff_avail:scores.clinic[2], clinic_wait:scores.clinic[3],
+    clinic_cleanliness:scores.clinic[4], clinic_empathy:scores.clinic[5],
+    clinic_followup:scores.clinic[6], clinic_access:scores.clinic[7],
+    clinic_results:scores.clinic[8], clinic_decision:scores.clinic[9],
+    surg_explain:hasSurgery?scores.surgery[0]:null,
+    surg_prep:hasSurgery?scores.surgery[1]:null,
+    surg_anesthesia:hasSurgery?scores.surgery[2]:null,
+    surg_instructions:hasSurgery?scores.surgery[3]:null,
+    surg_followup:hasSurgery?scores.surgery[4]:null,
+    surg_outcome:hasSurgery?scores.surgery[5]:null,
+    surg_recovery:hasSurgery?scores.surgery[6]:null,
+    surg_staff:hasSurgery?scores.surgery[7]:null,
+    surg_hospitalization:hasSurgery?scores.surgery[8]:null,
+    gen_satisfaction:scores.general[0], gen_return:scores.general[1],
+    gen_expectations:scores.general[2], gen_trust:scores.general[3],
+    comment_good:document.getElementById('txt-good')?.value||'',
+    comment_improve:document.getElementById('txt-improve')?.value||''
+  };
+
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/feedback`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'return=minimal'},
+      body:JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error(res.status);
+    document.getElementById('success-msg').textContent=d.success;
+    document.getElementById('success-msg').style.display='block';
+    btn.style.display='none';
+  }catch(e){
+    errEl.textContent=d.err+' ('+e.message+')';
+    errEl.style.display='block';
+    btn.disabled=false; btn.textContent=d.submit;
+  }
+}
+
+setLang('he', document.querySelector('.lang-btn'));
+</script>
+</body>
+</html>
