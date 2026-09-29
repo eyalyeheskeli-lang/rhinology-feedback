@@ -251,6 +251,17 @@ async function submitForm(){
 }
 
 setLang('he', document.querySelector('.lang-btn'));
+
+// auto-fill patient code from URL ?code=RH-XXXX
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) {
+    document.getElementById('patient-code').value = code;
+    document.getElementById('patient-code').readOnly = true;
+    document.getElementById('patient-code').style.background = '#f0f4f8';
+  }
+})();
 </script>
 </body>
 </html>
