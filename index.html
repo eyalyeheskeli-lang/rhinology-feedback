@@ -8,7 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f5f5f5;color:#222;padding:1rem}
 .wrap{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-h1{font-size:18px;font-weight:600;margin-bottom:.25rem;color:#1a1a1a}
+h1{font-size:16px;font-weight:600;margin-bottom:.25rem;color:#1a1a1a}
 .subtitle{font-size:13px;color:#666;margin-bottom:1.5rem}
 .lang-bar{display:flex;gap:8px;margin-bottom:1.5rem}
 .lang-btn{padding:5px 14px;border:1px solid #ccc;border-radius:8px;background:none;cursor:pointer;font-size:13px;color:#555}
@@ -20,9 +20,13 @@ h1{font-size:18px;font-weight:600;margin-bottom:.25rem;color:#1a1a1a}
 .section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:1rem;padding-bottom:6px;border-bottom:1px solid #eee}
 .q-row{margin-bottom:1.1rem}
 .q-label{font-size:14px;color:#222;margin-bottom:6px;display:block}
+.stars-wrap{display:flex;align-items:center;gap:8px;margin-top:4px}
+.stars-lbl{font-size:11px;color:#999;white-space:nowrap}
+.stars-num{font-size:12px;color:#aaa;font-weight:600;min-width:12px;text-align:center}
 .stars{display:flex;gap:6px}
 .star{font-size:30px;cursor:pointer;color:#ddd;line-height:1;padding:2px;transition:color .1s;user-select:none}
 .star:hover,.star.lit{color:#F0B429}
+.star-val{font-size:12px;color:#1a56c4;font-weight:700;min-width:18px;text-align:center}
 .yn{display:flex;gap:8px;margin-top:6px}
 .yn-btn{padding:7px 20px;border:1px solid #ccc;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;color:#333}
 .yn-btn.active{background:#e8f0fe;border-color:#4a80d4;color:#1a56c4;font-weight:600}
@@ -37,11 +41,29 @@ textarea:focus{outline:none;border-color:#4a80d4}
 .submit-btn:disabled{opacity:.5;cursor:not-allowed}
 .success{display:none;padding:14px;background:#e6f9ee;border:1px solid #34c77b;color:#176639;border-radius:8px;font-size:14px;text-align:center;margin-top:1rem}
 .err{display:none;padding:10px 14px;background:#fde8e8;border:1px solid #d44a4a;color:#b91c1c;border-radius:8px;font-size:13px;margin-top:.75rem}
+/* Thank-you / marketing page */
+.ty-page{display:none;margin-top:1.5rem}
+.ty-header{text-align:center;padding:1.25rem 1rem 1rem;background:linear-gradient(135deg,#1a56c4 0%,#2d7dd2 100%);border-radius:12px;color:#fff;margin-bottom:1.25rem}
+.ty-header .ty-icon{font-size:40px;margin-bottom:.4rem}
+.ty-header h2{font-size:19px;font-weight:700;margin-bottom:.3rem}
+.ty-header p{font-size:13px;opacity:.85}
+.ty-card{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.ty-card h3{font-size:14px;font-weight:700;color:#1a56c4;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.ty-card p{font-size:13px;color:#444;line-height:1.65}
+.ty-social{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:.75rem}
+.ty-social a{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:600;text-decoration:none;transition:opacity .15s}
+.ty-social a:hover{opacity:.82}
+.ty-fb{background:#1877F2;color:#fff}
+.ty-tk{background:#000;color:#fff}
+.ty-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.ty-web{background:#1a56c4;color:#fff}
+.ty-divider{height:1px;background:#eee;margin:1rem 0}
+.ty-contact{font-size:12px;color:#888;text-align:center;margin-top:.5rem}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1 id="page-title">שאלון משוב מטופלים</h1>
+  <h1 id="page-title">שאלון משוב מטופלים<br><span style="font-size:14px;font-weight:400;color:#555">מרפאת אף וסינוסים | ד״ר אייל יחזקאלי</span></h1>
   <p class="subtitle" id="intro"></p>
 
   <div class="lang-bar">
@@ -81,6 +103,50 @@ textarea:focus{outline:none;border-color:#4a80d4}
   <button class="submit-btn" id="submit-btn" onclick="submitForm()"></button>
   <div class="err" id="err-msg"></div>
   <div class="success" id="success-msg"></div>
+
+  <!-- Thank-you / marketing page shown after submission -->
+  <div class="ty-page" id="ty-page">
+    <div class="ty-header">
+      <div class="ty-icon">🎉</div>
+      <h2>תודה על המשוב שלך!</h2>
+      <p>הדעה שלך חשובה לנו ועוזרת לנו להשתפר</p>
+    </div>
+
+    <div class="ty-card">
+      <h3>🏥 על המרפאה הרינולוגית</h3>
+      <p>מרפאת אף וסינוסים בראשות ד״ר אייל יחזקאלי מתמחה בטיפול מקיף בבעיות האף, הסינוסים ובסיס הגולגולת. המרפאה משלבת אבחון מתקדם, טיפול שמרני וניתוחי אנדוסקופיה מדויקים — תוך גישה אישית לכל מטופל.</p>
+    </div>
+
+    <div class="ty-card">
+      <h3>👨‍⚕️ ד״ר אייל יחזקאלי</h3>
+      <p>מומחה באף-אוזן-גרון עם התמחות ברינולוגיה וניתוחי סינוסים. מנהל מחלקת אא״ג במרכז הרפואי שמיר-אסף הרופא. בעל ניסיון רב בניתוחים אנדוסקופיים של הסינוסים, ניתוחי מחיצה ועיצוב אף תפקודי.</p>
+    </div>
+
+    <div class="ty-card">
+      <h3>✨ ניתוחים וטכנולוגיות חדישות</h3>
+      <p>המרפאה מציעה את הטכנולוגיות המתקדמות ביותר: ניתוחי FESS (אנדוסקופי), Balloon Sinuplasty ללא חתכים, ניתוחי מחיצה ולשד האף, וטיפולים ביולוגיים לסינוסיטיס כרונית — כולם עם ניווט ממוחשב מדויק.</p>
+    </div>
+
+    <div class="ty-card">
+      <h3>📱 עקוב ולמד עוד</h3>
+      <p style="margin-bottom:.75rem">תכנים מקצועיים, עדכוני בריאות, ותשובות לשאלות שלכם — בכל הפלטפורמות:</p>
+      <div class="ty-social">
+        <a href="https://www.facebook.com/eyalent/" target="_blank" rel="noopener" class="ty-fb">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.27h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+          פייסבוק
+        </a>
+        <a href="https://www.tiktok.com/@eyaly1" target="_blank" rel="noopener" class="ty-tk">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.19 8.19 0 0 0 4.79 1.53V6.75a4.85 4.85 0 0 1-1.02-.06z"/></svg>
+          טיקטוק
+        </a>
+        <a href="https://afozen.co.il" target="_blank" rel="noopener" class="ty-web">
+          🌐 afozen.co.il
+        </a>
+      </div>
+      <div class="ty-divider"></div>
+      <div class="ty-contact">📍 מרכז רפואי שמיר-אסף הרופא &nbsp;|&nbsp; 📞 08-977-9000</div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -89,14 +155,14 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 
 const LANGS={
   he:{
-    dir:'rtl',title:'שאלון משוב מטופלים',pid:'קוד מטופל:',
-    intro:'שלום! נשמח לשמוע על חוויית הטיפול שלך. המשוב עוזר לנו להשתפר.',
+    dir:'rtl',title:'שאלון משוב מטופלים<br><span style="font-size:14px;font-weight:400;color:#555">מרפאת אף וסינוסים | ד״ר אייל יחזקאלי</span>',pid:'קוד מטופל:',
+    intro:'שלום! נשמח לשמוע על חוויית הטיפול שלך. המשוב עוזר לנו להשתפר.<br>יותר כוכבים = יותר טוב.<br>נשמח להערות חופשיות — ספרו לנו על התחושות שלכם.',
     secClinic:'מרפאה רינולוגית',secSurgery:'הליך ניתוחי',secGeneral:'כללי',
     gateQ:'האם עברת ניתוח במסגרת הטיפול?',yes:'כן',no:'לא',
     submit:'שלח משוב',success:'תודה! המשוב שלך נשמר ויעזור לנו להשתפר.',
     err:'שגיאה בשמירה, נסה שוב.',errCode:'יש להזין קוד מטופל.',
     errStars:'יש לדרג את כל השאלות.',errGate:'יש לענות על שאלת הניתוח.',
-    pgood:'מה היה טוב?',pimprove:'מה ניתן לשפר?',
+    pgood:'מה היה טוב?',pimprove:'מה ניתן לשפר?',bad:'גרוע',good:'מצוין',
     clinic:['הסבר על האבחנה והמצב הרפואי','הסבר על אפשרויות הטיפול','זמינות הצוות לשאלות','זמן המתנה לתור','ניקיון ונוחות המרפאה','יחס אישי ואמפתיה','המשכיות הטיפול ומעקב','נגישות לתיאום תורים','הסבר על תוצאות בדיקות','שיתוף בהחלטה הטיפולית'],
     surgery:['הסבר לפני הניתוח (ציפיות וסיכונים)','הכנה לניתוח – הנחיות טרום ניתוח','חוויית ההרדמה','הוראות טיפול לאחר הניתוח','מעקב פוסט-אופרטיבי','תוצאת הניתוח – שיפור בתסמינים','משך זמן ההחלמה','זמינות הצוות בתקופת ההחלמה','האישפוז במחלקה'],
     general:['שביעות רצון כוללת מהטיפול','האם תחזור לטיפול עתידי','השוואה לציפיות מראש','תחושת ביטחון ואמון בצוות']
@@ -109,7 +175,7 @@ const LANGS={
     submit:'إرسال الملاحظات',success:'شكراً! تم حفظ ملاحظاتك.',
     err:'خطأ في الحفظ.',errCode:'يرجى إدخال رمز المريض.',
     errStars:'يرجى تقييم جميع الأسئلة.',errGate:'يرجى الإجابة على سؤال العملية.',
-    pgood:'ما الذي كان جيداً؟',pimprove:'ما الذي يمكن تحسينه؟',
+    pgood:'ما الذي كان جيداً؟',pimprove:'ما الذي يمكن تحسينه؟',bad:'سيء',good:'ممتاز',
     clinic:['شرح التشخيص والحالة الطبية','شرح خيارات العلاج','توافر الطاقم للأسئلة','وقت الانتظار للموعد','نظافة العيادة وراحتها','المعاملة الشخصية والتعاطف','استمرارية العلاج والمتابعة','سهولة تنسيق المواعيد','شرح نتائج الفحوصات','المشاركة في القرار العلاجي'],
     surgery:['الشرح قبل العملية','التحضير للعملية','تجربة التخدير','تعليمات ما بعد العملية','المتابعة بعد العملية','نتيجة العملية','مدة التعافي','توافر الطاقم في التعافي','الإقامة في القسم'],
     general:['الرضا العام','العودة للعلاج مستقبلاً','مقارنة بالتوقعات','الثقة بالطاقم']
@@ -122,7 +188,7 @@ const LANGS={
     submit:'Отправить отзыв',success:'Спасибо! Ваш отзыв сохранён.',
     err:'Ошибка сохранения.',errCode:'Введите код пациента.',
     errStars:'Пожалуйста, оцените все вопросы.',errGate:'Ответьте на вопрос об операции.',
-    pgood:'Что было хорошо?',pimprove:'Что можно улучшить?',
+    pgood:'Что было хорошо?',pimprove:'Что можно улучшить?',bad:'Плохо',good:'Отлично',
     clinic:['Объяснение диагноза','Варианты лечения','Доступность персонала','Время ожидания','Чистота клиники','Личное отношение','Преемственность лечения','Запись на приём','Результаты обследований','Участие в решениях'],
     surgery:['Объяснение перед операцией','Подготовка к операции','Анестезия','Инструкции после операции','Наблюдение после операции','Результат операции','Время восстановления','Доступность персонала','Госпитализация'],
     general:['Общая удовлетворённость','Возврат на лечение','Сравнение с ожиданиями','Доверие к персоналу']
@@ -137,8 +203,8 @@ function setLang(l, btn){
   const d=LANGS[l];
   document.documentElement.dir=d.dir;
   document.documentElement.lang=l;
-  document.getElementById('page-title').textContent=d.title;
-  document.getElementById('intro').textContent=d.intro;
+  document.getElementById('page-title').innerHTML=d.title;
+  document.getElementById('intro').innerHTML=d.intro;
   document.getElementById('pid-label').textContent=d.pid;
   document.getElementById('sec-clinic').textContent=d.secClinic;
   document.getElementById('sec-surgery').textContent=d.secSurgery;
@@ -158,12 +224,17 @@ function renderQ(cat,qs){
   document.getElementById('qs-'+cat).innerHTML=qs.map((q,i)=>`
     <div class="q-row">
       <span class="q-label">${q}</span>
-      <div class="stars">
-        <span class="star${(scores[cat][i]||0)>=1?' lit':''}" onclick="setStar('${cat}',${i},1)">★</span>
-        <span class="star${(scores[cat][i]||0)>=2?' lit':''}" onclick="setStar('${cat}',${i},2)">★</span>
-        <span class="star${(scores[cat][i]||0)>=3?' lit':''}" onclick="setStar('${cat}',${i},3)">★</span>
-        <span class="star${(scores[cat][i]||0)>=4?' lit':''}" onclick="setStar('${cat}',${i},4)">★</span>
-        <span class="star${(scores[cat][i]||0)>=5?' lit':''}" onclick="setStar('${cat}',${i},5)">★</span>
+      <div class="stars-wrap">
+        <span class="stars-num">1</span>
+        <div class="stars" id="stars-${cat}-${i}">
+          <span class="star${(scores[cat][i]||0)>=1?' lit':''}" onclick="setStar('${cat}',${i},1)">★</span>
+          <span class="star${(scores[cat][i]||0)>=2?' lit':''}" onclick="setStar('${cat}',${i},2)">★</span>
+          <span class="star${(scores[cat][i]||0)>=3?' lit':''}" onclick="setStar('${cat}',${i},3)">★</span>
+          <span class="star${(scores[cat][i]||0)>=4?' lit':''}" onclick="setStar('${cat}',${i},4)">★</span>
+          <span class="star${(scores[cat][i]||0)>=5?' lit':''}" onclick="setStar('${cat}',${i},5)">★</span>
+        </div>
+        <span class="stars-num">5</span>
+        <span class="star-val" id="sv-${cat}-${i}">${scores[cat][i]||''}</span>
       </div>
     </div>`).join('');
 }
@@ -172,12 +243,17 @@ function renderGeneral(d){
   document.getElementById('qs-general').innerHTML=d.general.map((q,i)=>`
     <div class="q-row">
       <span class="q-label">${q}</span>
-      <div class="stars">
-        <span class="star${(scores.general[i]||0)>=1?' lit':''}" onclick="setStar('general',${i},1)">★</span>
-        <span class="star${(scores.general[i]||0)>=2?' lit':''}" onclick="setStar('general',${i},2)">★</span>
-        <span class="star${(scores.general[i]||0)>=3?' lit':''}" onclick="setStar('general',${i},3)">★</span>
-        <span class="star${(scores.general[i]||0)>=4?' lit':''}" onclick="setStar('general',${i},4)">★</span>
-        <span class="star${(scores.general[i]||0)>=5?' lit':''}" onclick="setStar('general',${i},5)">★</span>
+      <div class="stars-wrap">
+        <span class="stars-num">1</span>
+        <div class="stars" id="stars-general-${i}">
+          <span class="star${(scores.general[i]||0)>=1?' lit':''}" onclick="setStar('general',${i},1)">★</span>
+          <span class="star${(scores.general[i]||0)>=2?' lit':''}" onclick="setStar('general',${i},2)">★</span>
+          <span class="star${(scores.general[i]||0)>=3?' lit':''}" onclick="setStar('general',${i},3)">★</span>
+          <span class="star${(scores.general[i]||0)>=4?' lit':''}" onclick="setStar('general',${i},4)">★</span>
+          <span class="star${(scores.general[i]||0)>=5?' lit':''}" onclick="setStar('general',${i},5)">★</span>
+        </div>
+        <span class="stars-num">5</span>
+        <span class="star-val" id="sv-general-${i}">${scores.general[i]||''}</span>
       </div>
     </div>`).join('')+`
   <div class="q-row"><span class="q-label">${d.pgood}</span><textarea id="txt-good" placeholder="${d.pgood}"></textarea></div>
@@ -186,8 +262,10 @@ function renderGeneral(d){
 
 function setStar(cat,i,val){
   scores[cat][i]=val;
-  const stars=document.querySelectorAll(`#qs-${cat} .q-row:nth-child(${i+1}) .star`);
+  const stars=document.querySelectorAll(`#stars-${cat}-${i} .star`);
   stars.forEach((s,idx)=>s.classList.toggle('lit',idx<val));
+  const sv=document.getElementById(`sv-${cat}-${i}`);
+  if(sv) sv.textContent=val;
 }
 
 function setSurgery(val){
@@ -243,6 +321,8 @@ async function submitForm(){
     document.getElementById('success-msg').textContent=d.success;
     document.getElementById('success-msg').style.display='block';
     btn.style.display='none';
+    document.getElementById('ty-page').style.display='block';
+    document.getElementById('ty-page').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
     errEl.textContent=d.err+' ('+e.message+')';
     errEl.style.display='block';
@@ -251,6 +331,28 @@ async function submitForm(){
 }
 
 setLang('he', document.querySelector('.lang-btn'));
+
+// Load thank-you page content from Supabase
+async function loadPageContent(){
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/page_content?select=key,value`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    if(!res.ok) return;
+    const rows=await res.json();
+    const c={};
+    rows.forEach(r=>c[r.key]=r.value);
+    if(c.clinic) document.getElementById('ty-text-clinic').textContent=c.clinic;
+    if(c.doctor) document.getElementById('ty-text-doctor').textContent=c.doctor;
+    if(c.surgery) document.getElementById('ty-text-surgery').textContent=c.surgery;
+    if(c.fb){ const el=document.getElementById('ty-link-fb'); if(el){el.href=c.fb; el.style.display=c.fb?'':'none';} }
+    if(c.tk!==undefined){ const el=document.getElementById('ty-link-tk'); if(el){el.href=c.tk; el.style.display=c.tk?'':'none';} }
+    if(c.ig!==undefined){ const el=document.getElementById('ty-link-ig'); if(el){el.href=c.ig; el.style.display=c.ig?'flex':'none';} }
+    if(c.web){ const el=document.getElementById('ty-link-web'); if(el){el.href=c.web; el.style.display=c.web?'':'none'; const t=document.getElementById('ty-web-txt'); if(t) t.textContent=c.web.replace(/https?:\/\//,'');} }
+    if(c.contact) document.getElementById('ty-contact').textContent=c.contact;
+  }catch(e){}
+}
+loadPageContent();
 
 // auto-fill patient code from URL ?code=RH-XXXX
 (function(){
